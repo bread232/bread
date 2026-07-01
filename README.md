@@ -1,6 +1,6 @@
-# WheatSong · 面包奇旅 开源项目集
+# WheatSong · 开源项目集
 
-欢迎来到 **WheatSong（面包奇旅）** 的开源仓库！这里汇集了「面包奇旅」系列游戏及其周边工具的全部前端源代码。所有项目均使用原生 HTML/CSS/JavaScript 构建，并基于 **Supabase** 提供后端服务，完全开源，可供学习、二次开发或自部署。
+欢迎来到 **WheatSong** 的开源仓库！这里汇集了「面包奇旅」系列游戏及其周边工具的全部前端源代码。所有项目均使用原生 HTML/CSS/JavaScript 构建，并基于 **Supabase** 提供后端服务，完全开源，可供学习、二次开发或自部署。
 
 ---
 
@@ -191,4 +191,3 @@ wheatsong/
 如有问题，请提交 Issue 或联系项目维护者。
 
 🌾 **WheatSong · DOUGH LEAVENING · BAKING WHIMS**
-```
