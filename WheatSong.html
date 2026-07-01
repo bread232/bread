@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WheatSong</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico?i=1">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { -webkit-tap-highlight-color: transparent; }
+
+@font-face{font-family:'HanyiWenhei';src:url('https://ojeykghutjkpugslsnso.supabase.co/storage/v1/object/sign/web/HYWH-85W-heavy.ttf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kMjg1NWJhZC1mNTQ0LTQ3YzMtODg2My0xY2Y0MWRjZThhZjciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ3ZWIvSFlXSC04NVctaGVhdnkudHRmIiwiaWF0IjoxNzc4MzM0MDA5LCJleHAiOjIwOTM2OTQwMDl9.RbdxVuyGRSs3D0AXJjzl3xLLOB3hwaKZcoKuf_ypTlc');font-weight:600;font-style:normal}
+@font-face{font-family:'HYXiaoYaoGuaiJ-2';src:url('https://ojeykghutjkpugslsnso.supabase.co/storage/v1/object/sign/web/AaDracula.ttf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kMjg1NWJhZC1mNTQ0LTQ3YzMtODg2My0xY2Y0MWRjZThhZjciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ3ZWIvQWFEcmFjdWxhLnR0ZiIsImlhdCI6MTc3ODkxNzMwOSwiZXhwIjoyMDk0Mjc3MzA5fQ.hHxFuaQlnqaRloeIEeGRNXTMZcyU38m3m9JLMNRFYXQ');font-weight:600;font-style:normal}
+@font-face{font-family:'Cinzel Decorative';src:url('https://ojeykghutjkpugslsnso.supabase.co/storage/v1/object/sign/web/CinzelDecorative.ttf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kMjg1NWJhZC1mNTQ0LTQ3YzMtODg2My0xY2Y0MWRjZThhZjciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ3ZWIvQ2luemVsRGVjb3JhdGl2ZS50dGYiLCJpYXQiOjE3NzgzMzQyMTUsImV4cCI6MjA5MzY5NDIxNX0.rhgh8mD2YHwRws4meItnT8SjF9S7usL9Dti8cDpB8GQ');font-weight:400;font-style:normal}
+
+:root {
+  --gold-1: #FFD700;
+  --gold-2: #FFC107;
+  --gold-3: #D4A017;
+  --gold-4: #8B6914;
+  --gold-5: #6B4F1D;
+  --dark-1: #1A1008;
+  --dark-2: #2D1F0E;
+  --beige-1: #FDF5E6;
+  --beige-2: #FAEBD7;
+  --beige-3: #E8D5B7;
+  --font-main: 'HanyiWenhei', 'Noto Serif SC', serif;
+  --font-brand: 'Cinzel Decorative', serif;
+  --font-title: 'HYXiaoYaoGuaiJ-2', cursive;
+  --img-base: 'https://i.postimg.cc/';
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-main) !important;
+  font-weight: 600;
+  background-color: var(--dark-1);
+  color: var(--beige-1);
+  overflow-x: hidden;
+  cursor: default;
+}
+
+body, body *:not(.font-title):not(.font-brand) {
+  font-family: var(--font-main) !important;
+}
+
+.font-title { font-family: var(--font-title) !important; }
+.font-brand { font-family: var(--font-brand) !important; }
+
+.floating-particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.floating-particles span {
+  position: absolute;
+  display: block;
+  width: 4px; height: 4px;
+  background: var(--gold-1);
+  border-radius: 50%;
+  opacity: 0;
+  animation: floatParticle 8s infinite ease-in-out;
+  box-shadow: 0 0 8px var(--gold-1);
+}
+
+@keyframes floatParticle {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 0.7; transform: translateY(90vh) scale(1); }
+  90% { opacity: 0.2; transform: translateY(10vh) scale(0.6); }
+  100% { opacity: 0; transform: translateY(-10vh) scale(0); }
+}
+
+#cursor-glow {
+  position: fixed;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,215,0,0.12) 0%, rgba(255,215,0,0) 70%);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: screen;
+}
+
+#yeast-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.golden-flow {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #1A1008, #2D1F0E, #3A2610, #2D1F0E, #1A1008);
+  background-size: 400% 400%;
+  animation: flowGold 25s ease infinite;
+  z-index: -2;
+}
+
+@keyframes flowGold {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 50% 0%; }
+  50% { background-position: 100% 50%; }
+  75% { background-position: 50% 100%; }
+  100% { background-position: 0% 50%; }
+}
+
+nav {
+  position: fixed;
+  top: 0; width: 100%;
+  padding: 22px 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  background: linear-gradient(to bottom, rgba(26,16,8,0.95), transparent);
+  backdrop-filter: blur(8px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+nav.scrolled {
+  background: rgba(26,16,8,0.97);
+  padding: 14px 50px;
+  box-shadow: 0 4px 40px rgba(212,160,23,0.15);
+  border-bottom: 1px solid rgba(212,160,23,0.15);
+}
+
+.nav-brand {
+  font-family: var(--font-brand) !important;
+  font-size: 22px;
+  color: var(--gold-1);
+  text-decoration: none;
+  letter-spacing: 3px;
+  text-shadow: 0 0 20px rgba(255,215,0,0.5);
+  transition: text-shadow 0.3s;
+}
+.nav-brand:hover { text-shadow: 0 0 40px rgba(255,215,0,0.9); }
+
+.nav-links {
+  display: flex;
+  gap: 40px;
+  position: relative;
+}
+
+.nav-links a {
+  color: var(--beige-2);
+  text-decoration: none;
+  font-size: 15px;
+  letter-spacing: 1px;
+  position: relative;
+  transition: color 0.3s;
+  padding-bottom: 4px;
+}
+
+.nav-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--gold-1);
+  border-radius: 1px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 12px rgba(255,215,0,0.6);
+  pointer-events: none;
+}
+
+.nav-links a:hover { color: var(--gold-1); }
+
+.img-frame {
+  position: relative;
+  display: inline-block;
+}
+
+.img-frame::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border: 2px solid var(--gold-3);
+  border-radius: inherit;
+  opacity: 0.6;
+  transition: all 0.5s ease;
+}
+
+.img-frame:hover::before {
+  inset: -10px;
+  opacity: 1;
+  border-color: var(--gold-1);
+  box-shadow: 0 0 30px rgba(255,215,0,0.3);
+}
+
+.frame-circle { border-radius: 50%; }
+.frame-circle::before { border-radius: 50%; }
+.frame-circle img {
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.frame-diamond { border-radius: 8px; }
+.frame-diamond::before {
+  border-radius: 12px;
+  transition: all 0.5s ease;
+}
+.frame-diamond:hover::before {
+  transform: rotate(45deg);
+  inset: -14px;
+}
+
+.frame-ornate { border-radius: 16px; }
+.frame-ornate::before {
+  border-radius: 20px;
+  border-style: double;
+  border-width: 3px;
+}
+.frame-ornate::after {
+  content: '◇';
+  position: absolute;
+  top: -10px; right: -10px;
+  color: var(--gold-1);
+  font-size: 16px;
+  background: var(--dark-1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  z-index: 2;
+  transition: transform 0.5s ease;
+}
+.frame-ornate:hover::after { transform: rotate(180deg); }
+
+#hero {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-moon {
+  position: absolute;
+  top: 8%; right: 12%;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.95), #FDF5E6 40%, #D4B98D 90%);
+  box-shadow: 0 0 60px rgba(224,213,193,0.6), 0 0 120px rgba(212,185,141,0.3), 0 0 200px rgba(212,185,141,0.15);
+  opacity: 0.5;
+  animation: floatMoon 18s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes floatMoon {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-40px) scale(1.03); }
+}
+
+.hero-content {
+  position: relative; z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.hero-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  opacity: 0;
+  transform: translateY(40px) scale(0.9);
+  animation: revealHero 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+@keyframes revealHero {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.hero-logo-wrap {
+  width: 120px; height: 120px;
+  position: relative;
+}
+
+.hero-logo-wrap img {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--gold-1);
+  box-shadow: 0 0 40px rgba(255,215,0,0.4), inset 0 0 20px rgba(255,215,0,0.1);
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 40px rgba(255,215,0,0.4); }
+  50% { box-shadow: 0 0 80px rgba(255,215,0,0.8), 0 0 120px rgba(255,215,0,0.3); }
+}
+
+.hero-logo-wrap::after {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  border: 1px dashed var(--gold-3);
+  border-radius: 50%;
+  animation: spin 20s linear infinite;
+  opacity: 0.5;
+}
+
+.hero-welkin-wrap {
+  width: 100px; height: 100px;
+  position: relative;
+}
+
+.hero-welkin-wrap img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid var(--gold-3);
+  box-shadow: 0 0 25px rgba(255,215,0,0.25);
+  transform: rotate(-5deg);
+  transition: all 0.5s ease;
+}
+
+.hero-welkin-wrap:hover img {
+  transform: rotate(0deg) scale(1.1);
+  border-color: var(--gold-1);
+  box-shadow: 0 0 40px rgba(255,215,0,0.5);
+}
+
+.hero-welkin-wrap::after {
+  content: '空月之歌';
+  position: absolute;
+  bottom: -28px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--gold-4);
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.hero-title {
+  font-family: var(--font-title) !important;
+  font-size: clamp(52px, 9vw, 110px);
+  color: var(--gold-1);
+  line-height: 1;
+  text-shadow: 0 0 60px rgba(255,215,0,0.5), 0 4px 20px rgba(0,0,0,0.5);
+  opacity: 0;
+  transform: translateY(40px);
+  animation: revealHero 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+  position: relative;
+}
+
+.hero-title::after {
+  content: '';
+  display: block;
+  width: 60%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold-1), transparent);
+  margin: 20px auto 0;
+  opacity: 0.6;
+}
+
+.hero-subtitle {
+  font-family: var(--font-brand) !important;
+  font-size: 16px;
+  color: var(--beige-2);
+  letter-spacing: 8px;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: revealHero 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
+}
+
+.hero-tagline {
+  font-size: 15px;
+  color: var(--beige-3);
+  letter-spacing: 2px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: revealHero 1.4s cubic-bezier(0.16, 1, 0.3, 1) 1s forwards;
+  margin-top: -10px;
+}
+
+.hero-cta-group {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: revealHero 1.4s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 14px 40px;
+  border: 2px solid var(--gold-1);
+  color: var(--gold-1);
+  font-family: var(--font-main) !important;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  background: transparent;
+}
+
+.btn-primary::before, .btn-secondary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: var(--gold-1);
+  transition: left 0.4s ease;
+  z-index: -1;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+  color: var(--dark-1);
+  box-shadow: 0 0 30px rgba(255,215,0,0.5);
+}
+
+.btn-primary:hover::before, .btn-secondary:hover::before { left: 0; }
+
+.btn-secondary {
+  border-color: var(--gold-4);
+  color: var(--gold-4);
+}
+.btn-secondary::before { background: var(--gold-4); }
+.btn-secondary:hover { box-shadow: 0 0 20px rgba(139,105,20,0.4); }
+
+.scroll-hint {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold-4);
+  font-size: 12px;
+  letter-spacing: 3px;
+  opacity: 0;
+  animation: revealHero 1s ease 2s forwards;
+}
+
+.scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, var(--gold-1), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { transform: scaleY(1); opacity: 0.6; }
+  50% { transform: scaleY(0.5); opacity: 1; }
+}
+
+.section-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 160px 50px;
+  position: relative;
+}
+
+.section-reveal {
+  opacity: 0;
+  transform: translateY(80px);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.section-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-divider {
+  width: 100%; height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-4), transparent);
+  margin: 50px 0;
+  position: relative;
+}
+
+.section-divider::before {
+  content: '◇ ◇ ◇';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--dark-1);
+  color: var(--gold-3);
+  padding: 0 20px;
+  font-size: 12px;
+  letter-spacing: 10px;
+}
+
+.section-title {
+  font-family: var(--font-main) !important;
+  font-size: clamp(32px, 5vw, 52px);
+  color: var(--gold-1);
+  text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 0 0 30px rgba(255,215,0,0.25);
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold-3), transparent);
+  opacity: 0.5;
+}
+
+.section-desc {
+  text-align: center;
+  color: var(--beige-2);
+  font-size: 17px;
+  max-width: 850px;
+  margin: 0 auto 80px;
+  line-height: 2;
+  opacity: 0.75;
+}
+
+.chapter-timeline {
+  position: relative;
+  padding: 20px 0;
+}
+
+.chapter-timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, var(--gold-4), var(--gold-4), transparent);
+  transform: translateX(-50%);
+}
+
+.chapter-node {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 80px;
+  position: relative;
+}
+
+.chapter-node:nth-child(odd) { flex-direction: row; }
+.chapter-node:nth-child(even) { flex-direction: row-reverse; }
+
+.chapter-dot {
+  position: absolute;
+  left: 50%; top: 20px;
+  width: 18px; height: 18px;
+  background: var(--dark-1);
+  border: 2px solid var(--gold-1);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.chapter-node:hover .chapter-dot {
+  background: var(--gold-1);
+  box-shadow: 0 0 20px rgba(255,215,0,0.6);
+}
+
+.chapter-content {
+  width: 45%;
+  padding: 35px;
+  background: rgba(45,31,14,0.5);
+  border: 1px solid rgba(212,160,23,0.2);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.chapter-content::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: linear-gradient(to bottom, var(--gold-1), var(--gold-4));
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.5s ease;
+}
+
+.chapter-node:hover .chapter-content::before { transform: scaleY(1); }
+
+.chapter-node:hover .chapter-content {
+  transform: translateY(-5px);
+  border-color: var(--gold-3);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.4), 0 0 30px rgba(255,215,0,0.08);
+}
+
+.chapter-label {
+  color: var(--gold-3);
+  font-size: 12px;
+  letter-spacing: 3px;
+  margin-bottom: 8px;
+}
+
+.chapter-content h3 {
+  font-family: var(--font-main) !important;
+  font-size: 24px;
+  color: var(--gold-1);
+  margin-bottom: 15px;
+}
+
+.chapter-content p {
+  color: var(--beige-2);
+  line-height: 1.9;
+  font-size: 15px;
+  opacity: 0.75;
+}
+
+.chapter-expand {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chapter-node.expanded .chapter-expand {
+  max-height: 400px;
+}
+
+.chapter-expand p {
+  border-top: 1px solid rgba(212,160,23,0.2);
+  padding-top: 15px;
+  margin-top: 15px;
+  color: var(--beige-3);
+  opacity: 0.9;
+}
+
+.moons-container {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  flex-wrap: wrap;
+  margin-top: 60px;
+}
+
+.moon-orb {
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.moon-orb::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border: 1px solid rgba(255,215,0,0.3);
+  border-radius: 50%;
+  animation: spin 30s linear infinite;
+  border-style: dashed;
+  opacity: 0.4;
+}
+
+.moon-orb:hover {
+  transform: scale(1.2) translateY(-10px);
+  z-index: 10;
+}
+.moon-orb.active {
+  transform: scale(1.3) translateY(-15px);
+  z-index: 10;
+}
+
+.moon-rainbow {
+  background: radial-gradient(circle at 30% 30%, #fff, #ffe082 40%, #ffca28 70%, #ff6f00 100%);
+  box-shadow: 0 0 40px rgba(255,111,0,0.4), 0 0 80px rgba(255,202,40,0.2);
+}
+.moon-rainbow.active { box-shadow: 0 0 80px rgba(255,111,0,0.7), 0 0 160px rgba(255,202,40,0.4); }
+
+.moon-frost {
+  background: radial-gradient(circle at 30% 30%, #fff, #e3f2fd 40%, #90caf9 70%, #42a5f5 100%);
+  box-shadow: 0 0 40px rgba(66,165,245,0.4), 0 0 80px rgba(144,202,249,0.2);
+}
+.moon-frost.active { box-shadow: 0 0 80px rgba(66,165,245,0.7), 0 0 160px rgba(144,202,249,0.4); }
+
+.moon-yeast {
+  background: radial-gradient(circle at 30% 30%, #fff, #fff9c4 40%, #fff59d 70%, #ffee58 100%);
+  box-shadow: 0 0 40px rgba(255,238,88,0.4), 0 0 80px rgba(255,249,196,0.2);
+  animation: pulseYeast 4s ease-in-out infinite;
+}
+.moon-yeast.active { box-shadow: 0 0 80px rgba(255,238,88,0.8), 0 0 160px rgba(255,249,196,0.5); }
+
+@keyframes pulseYeast {
+  0%, 100% { box-shadow: 0 0 40px rgba(255,238,88,0.4), 0 0 80px rgba(255,249,196,0.2); }
+  50% { box-shadow: 0 0 70px rgba(255,238,88,0.6), 0 0 120px rgba(255,249,196,0.3); }
+}
+
+.moon-name {
+  position: absolute;
+  bottom: -45px;
+  font-size: 20px;
+  color: var(--gold-1);
+  white-space: nowrap;
+  letter-spacing: 2px;
+}
+
+.moon-subtitle {
+  position: absolute;
+  bottom: -68px;
+  font-size: 11px;
+  color: var(--gold-4);
+  white-space: nowrap;
+  letter-spacing: 1px;
+}
+
+.moon-lore-panel {
+  margin-top: 100px;
+  padding: 50px 60px;
+  background: rgba(45,31,14,0.7);
+  border: 1px solid rgba(212,160,23,0.25);
+  border-radius: 24px;
+  text-align: center;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  backdrop-filter: blur(15px);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.moon-lore-panel.visible { opacity: 1; transform: translateY(0); }
+
+.moon-lore-panel::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 20%; right: 20%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold-1), transparent);
+}
+
+.moon-lore-panel h3 {
+  color: var(--gold-1);
+  font-size: 26px;
+  margin-bottom: 25px;
+}
+
+.moon-lore-panel p {
+  color: var(--beige-2);
+  line-height: 2.2;
+  font-size: 15px;
+  max-width: 800px;
+}
+
+.char-carousel {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 40px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+}
+
+.char-card {
+  width: 260px;
+  min-height: 480px;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 2px solid rgba(212,160,23,0.2);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  background: var(--dark-2);
+}
+
+.char-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(26,16,8,0.98) 0%, rgba(26,16,8,0.5) 35%, transparent 65%);
+  z-index: 1;
+  transition: opacity 0.5s;
+}
+
+.char-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  min-height: 380px;
+}
+
+.char-card:hover img { transform: scale(1.08); }
+.char-card:hover::before { opacity: 0.8; }
+
+.char-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  border-radius: 18px;
+  z-index: 3;
+  transition: border-color 0.5s;
+  pointer-events: none;
+}
+
+.char-card:hover::after {
+  border-color: var(--gold-1);
+  box-shadow: inset 0 0 30px rgba(255,215,0,0.1);
+}
+
+.char-info {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  padding: 30px;
+  z-index: 2;
+}
+
+.char-role {
+  color: var(--gold-1);
+  font-size: 11px;
+  letter-spacing: 4px;
+  margin-bottom: 6px;
+}
+
+.char-name {
+  font-family: var(--font-main) !important;
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.char-desc-preview {
+  color: var(--beige-2);
+  font-size: 14px;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: all 0.4s ease 0.1s;
+  line-height: 1.7;
+}
+
+.char-card:hover .char-desc-preview {
+  opacity: 0.9;
+  transform: translateY(0);
+}
+
+.char-card:hover {
+  transform: translateY(-15px);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 40px rgba(255,215,0,0.1);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  backdrop-filter: blur(25px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 1000px;
+  height: 80vh;
+  background: linear-gradient(135deg, #2D1F0E, #1A1008);
+  border: 1px solid var(--gold-3);
+  border-radius: 24px;
+  display: flex;
+  overflow: hidden;
+  transform: scale(0.85) translateY(30px);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 120px rgba(255,215,0,0.15);
+  position: relative;
+}
+
+.modal-overlay.active .modal-content {
+  transform: scale(1) translateY(0);
+}
+
+.modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold-1), transparent);
+  z-index: 5;
+}
+
+.modal-img-wrap {
+  width: 45%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-img-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 60px;
+  background: linear-gradient(to right, transparent, #1A1008);
+  z-index: 2;
+}
+
+.modal-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-details {
+  flex: 1;
+  padding: 60px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.modal-close {
+  position: absolute;
+  top: 25px; right: 25px;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,215,0,0.3);
+  color: var(--gold-1);
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.modal-close:hover {
+  background: var(--gold-1);
+  color: var(--dark-1);
+  transform: rotate(90deg);
+}
+
+.modal-role { color: var(--gold-3); letter-spacing: 5px; font-size: 13px; margin-bottom: 8px; }
+.modal-name { font-size: 42px; color: #fff; margin-bottom: 25px; }
+.modal-divider { width: 80px; height: 3px; background: linear-gradient(to right, var(--gold-1), transparent); margin-bottom: 30px; border-radius: 2px; }
+
+.modal-quote {
+  color: var(--gold-3);
+  font-size: 16px;
+  margin-bottom: 30px;
+  padding-left: 20px;
+  border-left: 2px solid var(--gold-4);
+  line-height: 1.8;
+  font-style: italic;
+}
+
+.modal-bio {
+  color: var(--beige-2);
+  line-height: 2.2;
+  font-size: 15px;
+}
+
+.items-showcase {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.item-box {
+  width: 170px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.item-box:hover { transform: translateY(-15px) scale(1.05); }
+
+.item-icon {
+  width: 110px; height: 110px;
+  margin: 0 auto 20px;
+  background: radial-gradient(circle at 30% 30%, rgba(255,215,0,0.15), rgba(45,31,14,0.9));
+  border-radius: 20px;
+  border: 2px solid rgba(212,160,23,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  position: relative;
+}
+
+.item-icon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  pointer-events: none;
+}
+
+.item-box:hover .item-icon {
+  border-color: var(--gold-1);
+  box-shadow: 0 0 30px rgba(255,215,0,0.3), 0 20px 60px rgba(0,0,0,0.4);
+  transform: rotateY(10deg);
+}
+
+.item-icon img {
+  width: 70%; height: 70%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.item-img-screen {
+  mix-blend-mode: screen;
+}
+
+.item-box:hover .item-icon img { transform: scale(1.15); }
+
+.item-name { color: var(--gold-1); font-size: 15px; margin-bottom: 6px; }
+.item-rarity { color: var(--gold-4); font-size: 12px; letter-spacing: 2px; }
+
+footer {
+  text-align: center;
+  padding: 80px 50px;
+  background: linear-gradient(to top, rgba(26,16,8,1), rgba(26,16,8,0.8));
+  border-top: 1px solid rgba(212,160,23,0.15);
+  position: relative;
+}
+
+footer::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 15%; right: 15%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-3), transparent);
+}
+
+.footer-logo {
+  font-family: var(--font-brand) !important;
+  font-size: 28px;
+  color: var(--gold-1);
+  margin-bottom: 20px;
+  letter-spacing: 3px;
+}
+
+.footer-text { color: var(--gold-4); font-size: 13px; line-height: 2.2; }
+
+.footer-text a {
+  color: var(--gold-3);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(212,160,23,0.3);
+  transition: all 0.3s;
+}
+.footer-text a:hover { color: var(--gold-1); border-color: var(--gold-1); }
+
+.toast {
+  position: fixed;
+  bottom: 40px; left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(45,31,14,0.95);
+  border: 1px solid var(--gold-1);
+  color: var(--gold-1);
+  padding: 16px 35px;
+  border-radius: 50px;
+  z-index: 3000;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s;
+  backdrop-filter: blur(15px);
+  opacity: 0;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4), 0 0 20px rgba(255,215,0,0.1);
+}
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+.particle {
+  position: fixed;
+  width: 5px; height: 5px;
+  background: var(--gold-1);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+@media (max-width: 1000px) {
+  .char-carousel { flex-direction: column; align-items: center; }
+  .char-card { width: 90%; max-width: 340px; min-height: 400px; }
+  .char-card img { min-height: 300px; }
+  .modal-content { flex-direction: column; height: 90vh; }
+  .modal-img-wrap { width: 100%; height: 35%; }
+  .modal-img-wrap::after { display: none; }
+  .moons-container { gap: 50px; }
+  .moon-orb { width: 120px; height: 120px; }
+  .chapter-timeline::before { left: 20px; }
+  .chapter-node, .chapter-node:nth-child(even) { flex-direction: row; }
+  .chapter-content { width: calc(100% - 50px); margin-left: 50px; }
+  .chapter-dot { left: 20px; }
+  nav { padding: 15px 20px; }
+  .section-container { padding: 100px 20px; }
+  .hero-brand-row { gap: 20px; }
+  .hero-logo-wrap { width: 90px; height: 90px; }
+  .hero-welkin-wrap { width: 70px; height: 70px; }
+}
+
+@media (max-width: 600px) {
+  .nav-links { gap: 20px; }
+  .nav-links a { font-size: 13px; }
+  .hero-cta-group { flex-direction: column; gap: 12px; }
+  .items-showcase { gap: 25px; }
+  .item-box { width: 130px; }
+  .item-icon { width: 80px; height: 80px; }
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--dark-1); }
+::-webkit-scrollbar-thumb { background: var(--gold-4); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold-3); }
+
+</style>
+</head>
+<body>
+
+<div class="golden-flow"></div>
+<canvas id="yeast-canvas"></canvas>
+<div class="floating-particles" id="floatingParticles"></div>
+<div id="cursor-glow"></div>
+
+<nav id="navbar">
+  <a href="#hero" class="nav-brand font-brand">WHEATSONG</a>
+  <div class="nav-links" id="navLinks">
+    <a href="#story">世界观</a>
+    <a href="#moons">三月神话</a>
+    <a href="#characters">角色</a>
+    <a href="#items">圣遗物</a>
+    <div class="nav-indicator" id="navIndicator"></div>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="hero-moon"></div>
+  <div class="hero-content">
+    <div class="hero-brand-row">
+      <div class="hero-logo-wrap img-frame frame-circle">
+        <img src="https://i.postimg.cc/gJh1xjbF/wheatsong-logo.jpg" alt="面包奇旅">
+      </div>
+      <div class="hero-welkin-wrap img-frame frame-diamond">
+        <img src="https://i.postimg.cc/Zq8r0zsC/moon.jpg" alt="空月之歌">
+      </div>
+    </div>
+    <h1 class="hero-title font-title">面包奇旅</h1>
+    <p class="hero-subtitle font-brand">DOUGH LEAVENING · BAKING WHIMS</p>
+    <p class="hero-tagline">在废弃酵母的大陆上，寻找归途与真相</p>
+    <div class="hero-cta-group">
+      <button class="btn-primary" id="cta-btn">开启酵行之旅</button>
+      <button class="btn-secondary" onclick="document.querySelector('#characters').scrollIntoView({behavior:'smooth'})">认识酵行者</button>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>SCROLL</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<section id="story">
+  <div class="section-container">
+    <div class="section-reveal">
+      <h2 class="section-title">废弃酵母 · 酵醒之陆</h2>
+      <p class="section-desc">不知何时，空气里弥漫着甜腻与腐败交织的、名为「酵」的气息。双月当空，将苍白的光辉洒向无边无际的废弃酵母大陆。对于自「虚假之天」坠落的造物而言，这里的一切都陌生得令人窒息。</p>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="chapter-timeline section-reveal">
+
+      <div class="chapter-node" onclick="toggleChapter(this)">
+        <div class="chapter-dot"></div>
+        <div class="chapter-content">
+          <div class="chapter-label">序章 · 第一幕 · 第一节 · 阶段一</div>
+          <h3>进行思索</h3>
+          <p>面包自虚假之天坠落于荒野之境，在茫然与困惑中苏醒。举目四望，空气中弥漫着陌异的「酵」之气息，记忆如破碎的面团般难以拼凑。</p>
+          <div class="chapter-expand">
+            <p>面包苏醒于一片荒芜，空气中弥漫着名为「酵」的陌生气息。祂试图回忆自身来历，却只能捕捉到「虚假之天」与「试炼」的残影。四周诡谲而陌生，但祂深知不可久留，必须尽快查明真相，寻得归途。于是，祂踏上了探索这片废土的第一步。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter-node" onclick="toggleChapter(this)">
+        <div class="chapter-dot"></div>
+        <div class="chapter-content">
+          <div class="chapter-label">序章 · 第一幕 · 第一节 · 阶段二</div>
+          <h3>向右移动探索</h3>
+          <p>此处……颇觉阴森可怖。明月高悬，繁星闪烁，花草摇曳。面包在荒野中前行，试图理清现状，心中暗下决心，必当查明真相。</p>
+          <div class="chapter-expand">
+            <p>面包在荒野中独行，周遭的景物在月光下显得格外诡谲。祂感受到体内隐隐的不安，但为了探寻归途，祂必须继续前行。每一步都在这片陌生的土地上留下印记，也加深了祂对这个世界的好奇与警惕。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter-node" onclick="toggleChapter(this)">
+        <div class="chapter-dot"></div>
+        <div class="chapter-content">
+          <div class="chapter-label">序章 · 第一幕 · 第一节 · 阶段三</div>
+          <h3>继续探索</h3>
+          <p>在荒野深处，面包遇见了一位自称「八方迷蝶」的神秘使者。对方自称「酵行众」第二席执行官，并愿意引导面包前往边地小镇。</p>
+          <div class="chapter-expand">
+            <p>「吾乃『酵行众』第二席执行官『八方迷蝶』。至于吾之真名，汝不必知晓。」使者以沉稳的语调说道。面包虽心存疑虑，但在这片全然陌生的大陆上，有人引路总好过独自彷徨。于是祂跟随使者，朝着「边地小镇」的方向前行。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter-node" onclick="toggleChapter(this)">
+        <div class="chapter-dot"></div>
+        <div class="chapter-content">
+          <div class="chapter-label">序章 · 第一幕 · 第一节 · 阶段四</div>
+          <h3>前往边地小镇</h3>
+          <p>在使者「八萬」的引领下，面包抵达了边地小镇的医馆。八萬揭示了「酵行众」的来历，而面包体内突然涌入了奇异的「酵之力」。</p>
+          <div class="chapter-expand">
+            <p>「此处便是『废弃酵母·边地小镇』了么？」面包望着眼前错落的屋舍问道。八萬点头回应，并引祂进入医馆。在那里，八萬道出了自己的真名，以及「酵行众」管治民间疾苦的职责。就在此时，面包感到一股力量渗入体内，那竟是唯有至高官员方可拥有的「酵之力」。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter-node" onclick="toggleChapter(this)">
+        <div class="chapter-dot"></div>
+        <div class="chapter-content">
+          <div class="chapter-label">序章 · 第一幕 · 第一节 · 阶段五</div>
+          <h3>前往四处逛逛</h3>
+          <p>在小镇高塔下，面包与八萬终于见到了那位神秘医者。医者讲述了一段被尘封了四百年的历史，并指引祂们去寻找「虹月」的碎片。</p>
+          <div class="chapter-expand">
+            <p>「我正是那的医生。」神秘人揭开了自己的身份。祂讲述了四百年前「法涅娜·希珀塞莱尼娅」降临于世、以响指毁灭旧时代的往事。法涅娜凿开虫洞，将造物放逐至此。而赤月王朝的兴亡、三月碎片的传说，也在这段叙述中浮现。神医指引祂们去寻找「虹月」的碎片，以探寻重返虚假之天的真相。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter-node" onclick="toggleChapter(this)">
+        <div class="chapter-dot"></div>
+        <div class="chapter-content">
+          <div class="chapter-label">序章 · 第一幕 · 第二节 · 阶段一</div>
+          <h3>前往奇怪建筑</h3>
+          <p>在边地小镇的深处，面包与八萬发现了一栋被诡异紫色气息笼罩的房屋。八萬辨认出那是「深渊侵蚀」的征兆，暗示未来或许需要同深渊作战。</p>
+          <div class="chapter-expand">
+            <p>「为什么这栋房子那么奇怪啊？居然是紫色的。」面包望着那栋在夜色中散发幽紫光芒的建筑。八萬的神色变得凝重，解释说这是世界底层怪物气息外溢所致的「深渊侵蚀」。面包担忧自己该如何作战，八萬则安慰道，祂体内的「酵之力」愈发强烈，未来定能获得精妙的「技能」。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter-node" onclick="toggleChapter(this)">
+        <div class="chapter-dot"></div>
+        <div class="chapter-content">
+          <div class="chapter-label">序章 · 第一幕 · 第二节 · 阶段二</div>
+          <h3>迎接「深渊」</h3>
+          <p>在深渊气息最为浓烈之处，面包与八萬遭遇了一头自称「小黄」的机械巨兽。它竟是「酵行众」第三席执行官——「贪食机械巨兽·统御械」，并约定未来在格斗赛中再会。</p>
+          <div class="chapter-expand">
+            <p>「我全称『贪食机械巨兽·统御械』，自称『小黄』。」巨兽的声音带着金属的共鸣。它透露自己曾是「无极限超激格斗赛」的冠军，并感受到了面包体内「酵之力」的异常波动。面包心中燃起斗志，宣称待获得「技能」之后，必与小黄一战。小黄则留下承诺：在未来的某场赛事中，祂们终将再会。</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="moons">
+  <div class="section-container">
+    <div class="section-reveal">
+      <h2 class="section-title">三月当空 · 苍穹悲歌</h2>
+      <p class="section-desc">传说亘古之时，苍穹之上曾悬有三轮明月。点击唤醒沉睡的月矩力，聆听它们的呢喃。</p>
+    </div>
+
+    <div class="moons-container section-reveal">
+      <div class="moon-orb moon-rainbow" onclick="showMoonLore('rainbow', this)">
+        <span class="moon-name">虹月</span>
+        <span class="moon-subtitle">陨落的悲悯</span>
+      </div>
+      <div class="moon-orb moon-frost" onclick="showMoonLore('frost', this)">
+        <span class="moon-name">霜月</span>
+        <span class="moon-subtitle">沉默的观测者</span>
+      </div>
+      <div class="moon-orb moon-yeast" onclick="showMoonLore('yeast', this)">
+        <span class="moon-name">酵月</span>
+        <span class="moon-subtitle">呼吸的初源</span>
+      </div>
+    </div>
+
+    <div class="moon-lore-panel" id="moon-lore">
+      <h3 id="moon-title">唤醒三月</h3>
+      <p id="moon-desc">点击上方的月亮，聆听属于它的故事。</p>
+    </div>
+  </div>
+</section>
+
+<section id="characters">
+  <div class="section-container">
+    <div class="section-reveal">
+      <h2 class="section-title">酵行者 · 命运交织</h2>
+      <p class="section-desc">在废弃酵母的废土之上，他们因命运的指引而相遇。点击查看命运的伏线。</p>
+    </div>
+
+    <div class="char-carousel">
+      <div class="char-card section-reveal" onclick="openCharModal('bread')">
+        <img src="https://i.postimg.cc/L5gyGy2m/bread.jpg" alt="面包">
+        <div class="char-info">
+          <div class="char-role">主角 · 造物</div>
+          <div class="char-name">面包</div>
+          <div class="char-desc-preview">被造物主定义为玩笑的存在，却因实验事故获得了神的形态。在「酵失忆」的边缘寻找归途。</div>
+        </div>
+      </div>
+
+      <div class="char-card section-reveal" onclick="openCharModal('bawan')">
+        <img src="https://i.postimg.cc/mkyLF8fw/eightythousand.jpg" alt="八萬">
+        <div class="char-info">
+          <div class="char-role">向导 · 执行官</div>
+          <div class="char-name">八萬</div>
+          <div class="char-desc-preview">「酵行众」第二席执行官，自称「八方迷蝶」。在迷途中引路，对废弃酵母的秘密了然于心。</div>
+        </div>
+      </div>
+
+      <div class="char-card section-reveal" onclick="openCharModal('mystery')">
+        <img src="https://i.postimg.cc/4NXNTkVq/smallblack.jpg" alt="神秘人">
+        <div class="char-info">
+          <div class="char-role">遗民 · 神医</div>
+          <div class="char-name">？？？</div>
+          <div class="char-desc-preview">赤月王朝的遗民，被族人遗弃反而逃过神罚。以神医身份隐居边地小镇，守望着四百年的时光。</div>
+        </div>
+      </div>
+
+      <div class="char-card section-reveal" onclick="openCharModal('xiaohuang')">
+        <img src="https://i.postimg.cc/mgDLtYdy/smallyellow.jpg" alt="小黄">
+        <div class="char-info">
+          <div class="char-role">执行官 · 巨兽</div>
+          <div class="char-name">小黄</div>
+          <div class="char-desc-preview">「酵行众」第三席执行官，全称「贪食机械巨兽·统御械」。曾是无极限超激格斗赛的冠军，豪爽而好战。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="items">
+  <div class="section-container">
+    <div class="section-reveal">
+      <h2 class="section-title">遗世之物 · 神迹余辉</h2>
+      <p class="section-desc">在这片被遗弃的大陆上，有些事物依然闪烁着超越凡俗的光芒。</p>
+    </div>
+
+    <div class="items-showcase">
+      <div class="item-box section-reveal" onclick="showToast('超出世界的原初晶石，由无主的梦想与希望凝结而成的辉光。')">
+        <div class="item-icon"><img src="https://i.postimg.cc/mk2zRcxJ/image.png" alt="黄金酵母"></div>
+        <div class="item-name">「黄金酵母」</div>
+        <div class="item-rarity">★★★★★</div>
+      </div>
+      <div class="item-box section-reveal" onclick="showToast('通行大陆的钱，世界通用的共同语言，谁人都能理解的贵金属。')">
+        <div class="item-icon"><img src="https://i.postimg.cc/L6WYK6xQ/image.png" alt="麦粒"></div>
+        <div class="item-name">「麦粒」</div>
+        <div class="item-rarity">★★★</div>
+      </div>
+      <div class="item-box section-reveal" onclick="showToast('虹月将危险的蛛丝织成羽毛，模仿成鸟的翅膀，为家中带去些许温暖。冷却的血与火依旧维持着羽毛的形状。')">
+        <div class="item-icon"><img src="https://gensh.honeyhunterworld.com/img/i_n113061.webp" alt="丝赤之羽"></div>
+        <div class="item-name">「丝赤之羽」</div>
+        <div class="item-rarity">★★★★★</div>
+      </div>
+      <div class="item-box section-reveal" onclick="showToast('与「小黄」对话后获得的神秘力量，据说可以拿去参加一些神秘赛事……')">
+        <div class="item-icon"><img class="item-img-screen" src="https://i.postimg.cc/5NkWFrkd/bread-spower.png" alt="面包的力量"></div>
+        <div class="item-name">「面包的力量」</div>
+        <div class="item-rarity">★★★★</div>
+      </div>
+      <div class="item-box section-reveal" onclick="showToast('记录「酵行者」在废弃酵母大陆上的行踪。积攒到一定之后，可以升级「酵醒等阶」。')">
+        <div class="item-icon"><img src="https://gensh.honeyhunterworld.com/img/i_2002_35.webp" alt="酵行阅历"></div>
+        <div class="item-name">「酵行阅历」</div>
+        <div class="item-rarity">★★</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo font-brand">WHEATSONG</div>
+  <p class="footer-text">
+    DOUGH LEAVENING · BAKING WHIMS<br>
+    江西麦颂影音有限公司 · 面包八萬集团无限公司<br>
+    © 2026 WheatSong. All Rights Reserved.<br>
+    <a href="https://wheatsong-privacy.netlify.app/" target="_blank">隐私政策</a>
+  </p>
+</footer>
+
+<div class="modal-overlay" id="charModal">
+  <button class="modal-close" onclick="closeCharModal()">✕</button>
+  <div class="modal-content">
+    <div class="modal-img-wrap">
+      <img src="" alt="" class="modal-img" id="modalImg">
+    </div>
+    <div class="modal-details">
+      <div class="modal-role" id="modalRole"></div>
+      <div class="modal-name" id="modalName"></div>
+      <div class="modal-divider"></div>
+      <div class="modal-quote" id="modalQuote"></div>
+      <div class="modal-bio" id="modalBio"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+  const container = document.getElementById('floatingParticles');
+  for (let i = 0; i < 30; i++) {
+    const span = document.createElement('span');
+    const size = Math.random() * 4 + 2;
+    span.style.width = size + 'px';
+    span.style.height = size + 'px';
+    span.style.left = Math.random() * 100 + '%';
+    span.style.animationDelay = Math.random() * 10 + 's';
+    span.style.animationDuration = (Math.random() * 8 + 7) + 's';
+    container.appendChild(span);
+  }
+})();
+
+const canvas = document.getElementById('yeast-canvas');
+const ctx = canvas.getContext('2d');
+let bubbles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Bubble {
+  constructor(init) {
+    this.reset();
+    if (init) this.y = Math.random() * canvas.height;
+  }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + 60;
+    this.radius = Math.random() * 28 + 4;
+    this.speed = Math.random() * 0.6 + 0.15;
+    this.opacity = Math.random() * 0.2 + 0.04;
+    this.wobbleX = Math.random() * 1.5 - 0.75;
+    this.wobbleSpeed = Math.random() * 0.015 + 0.005;
+    this.angle = Math.random() * Math.PI * 2;
+  }
+  update() {
+    this.y -= this.speed;
+    this.angle += this.wobbleSpeed;
+    this.x += Math.sin(this.angle) * this.wobbleX;
+    if (this.y < -this.radius * 2) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255, 215, 0, ${this.opacity})`;
+    ctx.fill();
+    const hlR = Math.max(1, this.radius * 0.25);
+    ctx.beginPath();
+    ctx.arc(this.x - this.radius * 0.3, this.y - this.radius * 0.3, hlR, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.7})`;
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 55; i++) bubbles.push(new Bubble(true));
+
+function animateBubbles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  bubbles.forEach(b => { b.update(); b.draw(); });
+  requestAnimationFrame(animateBubbles);
+}
+animateBubbles();
+
+const cursorGlow = document.getElementById('cursor-glow');
+let mouseX = -500, mouseY = -500;
+let glowX = -500, glowY = -500;
+
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+function updateGlow() {
+  glowX += (mouseX - glowX) * 0.06;
+  glowY += (mouseY - glowY) * 0.06;
+  cursorGlow.style.left = glowX + 'px';
+  cursorGlow.style.top = glowY + 'px';
+  requestAnimationFrame(updateGlow);
+}
+updateGlow();
+
+document.addEventListener('click', (e) => {
+  for (let i = 0; i < 5; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = e.clientX + 'px';
+    p.style.top = e.clientY + 'px';
+    const angle = Math.random() * Math.PI * 2;
+    const dist = Math.random() * 60 + 20;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+    document.body.appendChild(p);
+    requestAnimationFrame(() => {
+      p.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+      p.style.transform = `translate(${dx}px, ${dy}px) scale(0)`;
+      p.style.opacity = '0';
+    });
+    setTimeout(() => p.remove(), 900);
+  }
+});
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    } else {
+      entry.target.classList.remove('visible');
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.section-reveal').forEach(el => observer.observe(el));
+
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+  updateNavIndicator();
+});
+
+function updateNavIndicator() {
+  const sections = ['story', 'moons', 'characters', 'items'];
+  const links = document.querySelectorAll('#navLinks a');
+  const indicator = document.getElementById('navIndicator');
+  let activeLink = null;
+
+  sections.forEach((id, index) => {
+    const section = document.getElementById(id);
+    if (section) {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= 100 && rect.bottom >= 100) {
+        activeLink = links[index];
+      }
+    }
+  });
+
+  if (!activeLink && window.scrollY < 300) {
+    activeLink = null;
+  }
+
+  if (activeLink) {
+    const linkRect = activeLink.getBoundingClientRect();
+    const navRect = document.getElementById('navLinks').getBoundingClientRect();
+    indicator.style.left = (linkRect.left - navRect.left) + 'px';
+    indicator.style.width = linkRect.width + 'px';
+    indicator.style.opacity = '1';
+  } else {
+    indicator.style.opacity = '0';
+  }
+}
+
+document.querySelectorAll('#navLinks a').forEach(link => {
+  link.addEventListener('click', () => {
+    setTimeout(updateNavIndicator, 100);
+  });
+});
+
+function toggleChapter(node) {
+  const wasExpanded = node.classList.contains('expanded');
+  document.querySelectorAll('.chapter-node').forEach(n => n.classList.remove('expanded'));
+  if (!wasExpanded) node.classList.add('expanded');
+}
+
+const moonData = {
+  rainbow: {
+    title: '虹月 · 陨落的悲悯',
+    desc: '最先崩毁的，往往是最先悲悯的那一个。它的碎片落在灰烬里，灰烬里便开出了王朝。王朝覆灭后，碎片仍在——只是不再发光。四百年前，虹月率先崩碎，其碎片被先民拾得，建立了辉煌一时的赤月王朝，妄图对抗虚假之天的意志。然而，昙花一现，仅一百五十载，王朝便遭神罚覆灭。那传说中藏于王座之下的虹月碎片，历经岁月洗礼，蕴含了通天彻地之能，如今亦不知所踪，或许正沉睡在这废弃酵母的某处角落。'
+  },
+  frost: {
+    title: '霜月 · 沉默的观测者',
+    desc: '唯一不曾言语的月亮。传说它目睹了虹月的坠落，也目睹了酵月的沉默。当旅人仰望它时，它只是将一切映回旅人眼底。有人从中看见了归途，有人看见了从未存在过的自己。它是虚无的镜面，映照着每个灵魂最深处的空洞。霜月不曾给予答案，因为它本身就是问题——关于存在，关于虚无，关于我们为何在此。'
+  },
+  yeast: {
+    title: '酵月 · 呼吸的初源',
+    desc: '最年轻的月亮，也是最古老的那一个。它不在天上，而在每一粒麦粉的呼吸之间。有人说，酵月从未升起，也从未落下——它只是等待被唤醒。而唤醒它的代价，是记得自己是谁。它存在于每一个发酵的面团中，每一次呼吸的间隙，是生命最本真的脉动。如今每逢闰年的最后一刻，三月会在天际短暂重逢——只为让世人记起，这个世界原本不是废墟。'
+  }
+};
+
+function showMoonLore(type, el) {
+  document.querySelectorAll('.moon-orb').forEach(m => m.classList.remove('active'));
+  el.classList.add('active');
+  const panel = document.getElementById('moon-lore');
+  panel.classList.remove('visible');
+  setTimeout(() => {
+    document.getElementById('moon-title').textContent = moonData[type].title;
+    document.getElementById('moon-desc').textContent = moonData[type].desc;
+    panel.classList.add('visible');
+  }, 400);
+}
+
+const charData = {
+  bread: {
+    img: 'https://i.postimg.cc/L5gyGy2m/bread.jpg',
+    role: '主角 · 造物',
+    name: '面包',
+    quote: '吾必当查明真相，寻得归途。',
+    bio: '世界创造者——天理「法涅娜·希珀塞莱尼娅」的造物。祂的名号与形态本应只是一个无关紧要的玩笑，然而四百年前的一次定义，与随后这场实验事故，却让面包成了祂此刻最确切的形态。<br><br>患有罕见的「酵失忆」症候群，每当试图回忆造物主时，便会引发思维逻辑紊乱，仿佛灵魂被抽离。在八萬的指引下，踏上了寻找三月碎片、重返虚假之天的旅途。<br><br>作为一团被揉乱的面团，面包的存在本身就是对造物主最大的讽刺。而唤醒「酵月」的代价——记得自己是谁——或许正是祂命中注定的试炼。'
+  },
+  bawan: {
+    img: 'https://i.postimg.cc/mkyLF8fw/eightythousand.jpg',
+    role: '向导 · 执行官',
+    name: '八萬',
+    quote: '吾乃「酵行众」第二席执行官「八方迷蝶」。至于吾之真名，汝不必知晓。',
+    bio: '自称「八方迷蝶」，实为「酵行众」第二席执行官。在废弃酵母大陆游历已久，对这片废土的风土人情与陈年旧事皆了如指掌。<br><br>在面包陷入迷茫时及时出现，以沉稳的引导稳住了局面。看似玩世不恭，实则心思缜密，对面包的体质异常并不意外，甚至暗中做好了应对的准备。<br><br>那句「难道你不想回虚假之天吗？」既是鼓励，也像是一种早已知晓答案的质问。八萬的真实目的和她所隐瞒的记忆，或许比面包的酵失忆更加深不可测。'
+  },
+  mystery: {
+    img: 'https://i.postimg.cc/4NXNTkVq/smallblack.jpg',
+    role: '遗民 · 神医',
+    name: '？？？',
+    quote: '若你们心存探寻真相之志，不妨试着寻找那三月的碎片。',
+    bio: '隐居于边地小镇的神医，真实身份是赤月王朝的遗民。在王朝建立一百四十年之际被族人遗弃，流放至边地。仅仅十年后，王朝便遭天理降下神罚而覆灭。<br><br>若非当年的遗弃，她恐怕早已随王朝化为尘土。命运弄人，背叛反而成了救赎，这份幸存者的矛盾心理让她在四百年的时光中既守望又逃避。<br><br>她以医术救人，却无法医治自己心中对王朝覆灭的执念。她为面包和八萬指明了寻找三月碎片的道路，但关于她为何能存活四百年，以及她与天理之间究竟有何渊源，依然是未解之谜。'
+  },
+  xiaohuang: {
+    img: 'https://i.postimg.cc/mgDLtYdy/smallyellow.jpg',
+    role: '执行官 · 巨兽',
+    name: '小黄',
+    quote: '我全称「贪食机械巨兽·统御械」，自称「小黄」。',
+    bio: '「酵行众」第三席执行官，全称「贪食机械巨兽·统御械」。因追寻「虹月」碎片而遭封印，在边地小镇的深渊侵蚀之地沉睡了四百年，直至面包与八萬的到来将其唤醒。<br><br>曾是无极限超激格斗赛的冠军，豪爽而好战。祂从面包身上感应到了「酵之力」的异常波动，并因此产生了浓厚的兴趣。祂向面包发出挑战，宣称待其获得「技能」之后，必在擂台上与之再会。<br><br>小黄的存在本身就是一个谜——祂为何会被封印？祂与「酵行众」之间究竟发生过什么？而祂所追寻的「虹月」碎片，又藏匿于何处？这些问题的答案，或许就藏在未来的某场赛事之中。'
+  }
+};
+
+function openCharModal(id) {
+  const data = charData[id];
+  document.getElementById('modalImg').src = data.img;
+  document.getElementById('modalRole').textContent = data.role;
+  document.getElementById('modalName').textContent = data.name;
+  document.getElementById('modalQuote').textContent = data.quote;
+  document.getElementById('modalBio').innerHTML = data.bio;
+  document.getElementById('charModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCharModal() {
+  document.getElementById('charModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('charModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('charModal')) closeCharModal();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeCharModal();
+});
+
+let toastTimer = null;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+document.getElementById('cta-btn').addEventListener('click', () => {
+  showToast('🌙 正在开启酵行之旅...');
+  window.open('https://wheatsong-breadimpact-login.netlify.app/', '_blank');
+});
+
+window.addEventListener('load', updateNavIndicator);
+</script>
+</body>
+</html>
