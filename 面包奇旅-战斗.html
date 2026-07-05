@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+<title>面包奇旅-战斗</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
+<script>
+var vConsole = new VConsole();
+</script>
+<style>
+* { -webkit-tap-highlight-color: transparent; box-sizing: border-box; margin: 0; padding: 0; }
+html, body { overflow: hidden; height: 100%; background-color: white; font-family: sans-serif; font-weight: 600; touch-action: none; user-select: none; }
+#background-image {
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background-image: url('https://i.postimg.cc/g07KVVbw/background.jpg');
+background-size: cover; background-position: center;
+z-index: 1;
+}
+#bread-character {
+position: absolute; width: 90px; height: 60px;
+border-radius: 8px; overflow: visible;
+box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+z-index: 60; cursor: grab;
+}
+#bread-character img {
+width: 100%; height: 100%;
+object-fit: cover; object-position: center;
+border-radius: 8px; pointer-events: none;
+position: relative; z-index: 10;
+}
+#xiaohuang {
+position: absolute; 
+width: 80px; 
+height: 80px;
+border-radius: 50%; 
+overflow: hidden;
+box-shadow: 0 0 15px rgba(255, 235, 59, 0.9);
+top: 150px; 
+right: 100px;
+z-index: 10; 
+opacity: 1;
+}
+#xiaohuang img { 
+width: 100%; 
+height: 100%; 
+object-fit: cover; 
+object-position: center; 
+}
+#normal-attack-btn {
+position: absolute; width: 100px; height: 100px; top: 65%; right: 100px;
+transform: translateY(-50%);
+background-size: cover; background-position: center;
+border-radius: 50%; z-index: 30; overflow: visible;
+background-image: url('https://i.postimg.cc/x8WQ811f/image.png');
+}
+#elemental-skill-btn {
+position: absolute; width: 75px; height: 75px;
+top: calc(65% + 50px + 10px);
+right: calc(100px + (100px - 75px) / 2 + 20px);
+background-size: cover; background-position: center;
+border-radius: 50%; z-index: 30; overflow: visible;
+background-image: url('https://i.postimg.cc/CMtSmmH3/image.png');
+}
+#elemental-burst-btn {
+position: absolute; width: 70px; height: 70px; top: 80%; right: 60px;
+transform: translateY(-50%);
+background-size: cover; background-position: center;
+border-radius: 50%; z-index: 30; overflow: visible;
+background-image: url('https://i.postimg.cc/J4kmgZpG/image.png');
+}
+#charged-attack-btn {
+position: absolute; width: 65px; height: 65px; top: 65%; right: 20px;
+transform: translateY(-50%);
+background-size: cover; background-position: center;
+border-radius: 50%; z-index: 30; overflow: visible;
+background-image: url('https://i.postimg.cc/J40Yj28X/image.png');
+}
+.skill-btn {
+cursor: pointer;
+}
+.skill-btn::before {
+content: ''; position: absolute; top: 50%; left: 50%;
+transform: translate(-50%, -50%); width: 100%; height: 100%;
+border-radius: 50%; background-color: rgba(255, 255, 255, 0.15);
+z-index: -1; pointer-events: none;
+}
+.gray-overlay {
+position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+background-color: rgba(100, 100, 100, 0.6);
+border-radius: 50%; pointer-events: none; z-index: 15;
+opacity: 0;
+}
+.snake-wisdom-overlay {
+position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+border-radius: 50%; pointer-events: none; z-index: 12; overflow: hidden;
+display: block;
+}
+.snake-wisdom-fill {
+position: absolute; bottom: 0; left: 0; width: 100%; height: 0%;
+background: linear-gradient(to top, rgba(25, 80, 180, 0.75) 0%, rgba(40, 100, 200, 0.65) 40%, rgba(80, 60, 150, 0.5) 70%, rgba(100, 70, 160, 0.3) 100%);
+}
+.ripple-effect {
+    position: absolute; 
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    pointer-events: none; 
+    z-index: -1;
+    animation: ripple-expand 0.3s ease-out forwards;
+}
+@keyframes ripple-expand {
+    0% { 
+        width: 100%; 
+        height: 100%; 
+        opacity: 0.6; 
+    }
+    100% { 
+        width: calc(100% + 40px); 
+        height: calc(100% + 40px); 
+        opacity: 0; 
+    }
+}
+@font-face{font-family:'HanyiWenhei';src:url('https://ojeykghutjkpugslsnso.supabase.co/storage/v1/object/sign/web/HYWH-85W-heavy.ttf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kMjg1NWJhZC1mNTQ0LTQ3YzMtODg2My0xY2Y0MWRjZThhZjciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ3ZWIvSFlXSC04NVctaGVhdnkudHRmIiwiaWF0IjoxNzc4MzM0MDA5LCJleHAiOjIwOTM2OTQwMDl9.RbdxVuyGRSs3D0AXJjzl3xLLOB3hwaKZcoKuf_ypTlc');font-weight:600;font-style:normal}
+.stage{width:100px;height:100px;position:absolute;top:5%;left:50%;transform:translate(-50%,0);opacity:0;pointer-events:none;transition:opacity 0.5s ease;overflow:visible;z-index:500}
+.wrap.show{opacity:1}
+.wrap.animate{animation:fadeInOut 3s ease forwards}
+@keyframes fadeInOut{0%{opacity:0}16.66%{opacity:1}83.33%{opacity:1}100%{opacity:0}}
+svg{display:block;width:100%;height:100%;overflow:visible}
+#numGroup{transform-box:fill-box;transform-origin:center}
+.title-text{font-size:61px;font-weight:400;font-style:normal;letter-spacing:2px;font-family:'HanyiWenhei',serif}
+.num-text{font-size:214px;font-weight:400;font-style:normal;letter-spacing:-8px;font-family:'HanyiWenhei',serif}
+.progress-area{position:absolute;top:0;left:50%;width:210px;height:58px;transform:translateX(-50%);opacity:0}
+.progress-area.active{opacity:1}
+.progress-meter{position:absolute;left:50%;top:20px;width:0;height:8px;transform:translateX(-50%);transition:width 0.45s ease}
+.progress-track{position:absolute;inset:0;background:#ffffff;overflow:hidden;clip-path:polygon(4px 0,calc(100% - 4px) 0,100% 50%,calc(100% - 4px) 100%,4px 100%,0 50%);transform:translateZ(0)}
+.progress-fill{position:absolute;left:0;top:0;width:0%;height:100%;background:#7ed44c;transition:width 0.7s ease}
+.progress-diamond{position:absolute;top:0;width:8px;height:8px;background:#ffffff;transform:rotate(45deg)}
+.progress-diamond.left{left:-13px}
+.progress-diamond.right{right:-13px}
+.progress-text{position:absolute;left:50%;transform:translateX(-50%);color:#7ed44c;white-space:nowrap;opacity:0;transition:opacity 0.25s ease;text-shadow:0 0 5px rgba(124,212,76,0.45);font-family:'HanyiWenhei',serif;font-weight:400}
+.progress-text.top{top:0;font-size:15px;line-height:15px}
+.progress-text.bottom{top:33px;font-size:15px;line-height:15px;color:#ffffff}
+.progress-area.show-bottom .progress-text.bottom{opacity:1}
+.progress-area.show-top .progress-text.top{opacity:1}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:9999;opacity:0;visibility:hidden;transition:all 0.3s ease}
+.modal-overlay.active{opacity:1;visibility:visible}
+.confirmation-modal{width:520px;background-color:#f5f0e6;border-radius:20px;padding:25px;position:relative;box-shadow:0 10px 25px rgba(0,0,0,0.2);transform:scale(0.9);transition:transform 0.3s ease}
+.modal-overlay.active .confirmation-modal{transform:scale(1)}
+.modal-title{font-size:22px;color:#5a4a42;margin-bottom:15px;text-align:center;font-weight:bold;font-family:'HanyiWenhei','Microsoft YaHei',serif}
+.divider{height:2px;background-color:#d4c19c;margin:15px 0;border-radius:1px}
+.modal-content{padding:30px 20px;text-align:center;color:#5a4a42;font-size:16px;line-height:1.5;position:relative;background-image:url('https://i.postimg.cc/15TCbqMk/modal-bg-icon-939867c4.png');background-repeat:no-repeat;background-position:center;background-size:216px;min-height:120px;display:flex;align-items:center;justify-content:center;flex-direction:column;white-space:normal;font-family:'HanyiWenhei','Microsoft YaHei',serif}
+.button-container{display:flex;justify-content:space-between;margin-top:20px}
+.modal-btn{display:flex;align-items:center;justify-content:center;padding:10px 25px;border-radius:30px;border:none;background-color:#333333;color:#ffffff;font-size:16px;transition:all 0.3s ease;position:relative;box-shadow:0 3px 6px rgba(0,0,0,0.1);width:40%;font-family:'HanyiWenhei','Microsoft YaHei',serif;cursor:pointer}
+.modal-btn:hover{background-color:#444444;transform:translateY(-2px);box-shadow:0 5px 10px rgba(0,0,0,0.15)}
+.cancel-btn{padding-left:40px}
+.confirm-btn{padding-left:40px;padding-right:25px}
+.btn-icon{position:absolute;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.cancel-icon{background-color:#000;left:10px}
+.cancel-icon::after{content:"";width:16px;height:16px;background-color:#3498db;clip-path:polygon(20% 0%,0% 20%,30% 50%,0% 80%,20% 100%,50% 70%,80% 100%,100% 80%,70% 50%,100% 20%,80% 0%,50% 30%)}
+.confirm-icon{left:10px;border:2px solid #3498db;width:24px;height:24px}
+.confirm-icon::after{content:"";width:12px;height:12px;border-radius:50%;border:2px solid #3498db}
+@media (max-width:600px){.confirmation-modal{width:90%;padding:20px}.modal-btn{width:45%;font-size:14px;padding:8px 16px}.modal-title{font-size:18px}.modal-content{font-size:14px;min-height:100px;padding:20px 15px;background-size:160px}}
+</style>
+</head>
+<body>
+<div id="background-image"></div>
+<div id="bread-character">
+<img src="https://i.postimg.cc/L5gyGy2m/bread.jpg" alt="面包">
+</div>
+<div id="xiaohuang">
+<img src="https://i.postimg.cc/mgDLtYdy/smallyellow.jpg" alt="小黄">
+</div>
+<div id="normal-attack-btn" class="skill-btn">
+<div class="gray-overlay"></div>
+</div>
+<div id="elemental-skill-btn" class="skill-btn">
+<div class="gray-overlay"></div>
+</div>
+<div id="elemental-burst-btn" class="skill-btn">
+<div class="gray-overlay"></div>
+<div class="snake-wisdom-overlay">
+<div class="snake-wisdom-fill"></div>
+</div>
+</div>
+<div id="charged-attack-btn" class="skill-btn">
+<div class="gray-overlay"></div>
+</div>
+<div class="stage">
+<div class="wrap">
+<svg viewBox="250 232 300 300" role="img" aria-label="酵醒等阶 1">
+<defs>
+<radialGradient id="discGlow" cx="50%" cy="42%" r="60%">
+<stop offset="0%" stop-color="#8ab84b" stop-opacity="0.55" />
+<stop offset="45%" stop-color="#496d29" stop-opacity="0.50" />
+<stop offset="80%" stop-color="#223916" stop-opacity="0.45" />
+<stop offset="100%" stop-color="#0b1408" stop-opacity="0.0" />
+</radialGradient>
+<linearGradient id="numFill" x1="0" y1="300" x2="0" y2="520" gradientUnits="userSpaceOnUse">
+<stop offset="0%" stop-color="#ffffa1" />
+<stop offset="44%" stop-color="#fbff95" />
+<stop offset="100%" stop-color="#efff84" />
+</linearGradient>
+<linearGradient id="titleFill" x1="0" y1="180" x2="0" y2="255" gradientUnits="userSpaceOnUse">
+<stop offset="0%" stop-color="#e7ff9c" />
+<stop offset="100%" stop-color="#b5ee72" />
+</linearGradient>
+<filter id="greenGlow" x="-80%" y="-80%" width="260%" height="260%">
+<feGaussianBlur stdDeviation="7" result="blur" />
+<feColorMatrix in="blur" type="matrix" values="0.55 0 0 0 0 0 1 0 0 0 0 0 0.25 0 0 0 0 0 0.85 0" result="glow" />
+<feMerge>
+<feMergeNode in="glow" />
+<feMergeNode in="SourceGraphic" />
+</feMerge>
+</filter>
+<filter id="numShadow" x="-40%" y="-40%" width="180%" height="180%">
+<feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#4a7a2a" flood-opacity="0.35" />
+<feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#efff86" flood-opacity="0.40" />
+</filter>
+<g id="diamond">
+<polygon points="0,-25 25,0 0,25 -25,0" fill="#16270d" stroke="#6f963b" stroke-width="5" opacity="0.85" />
+<polygon points="0,-13 13,0 0,13 -13,0" fill="none" stroke="#8dbf4a" stroke-width="4" opacity="0.65" />
+</g>
+</defs>
+<g transform="translate(400, 370) scale(0.5) translate(-400, -370)">
+<circle cx="400" cy="370" r="224" fill="url(#discGlow)" opacity="0.95" />
+<g opacity="0.45">
+<path d="M400 91 L444 271 L580 370 L445 432 L400 657 L355 432 L220 370 L356 271 Z" fill="#9bc85b" opacity="0.46" />
+<path d="M400 334 L452 431 L520 395 L474 459 L508 531 L433 497 L400 575 L367 497 L292 531 L326 459 L280 395 L348 431 Z" fill="#13240c" opacity="0.28" />
+</g>
+<g opacity="0.22">
+<path d="M400 88 C445 190 456 278 400 338 C344 278 355 190 400 88 Z" fill="#c8f278" />
+<path d="M400 652 C356 552 348 461 400 336 C452 461 444 552 400 652 Z" fill="#9ec65b" opacity="0.58" />
+</g>
+<g filter="url(#greenGlow)">
+<circle cx="400" cy="370" r="258" fill="none" stroke="#6f943d" stroke-width="5" opacity="0.82" />
+<circle cx="400" cy="370" r="236" fill="none" stroke="#8cb94e" stroke-width="4" opacity="0.78" />
+<circle cx="400" cy="370" r="213" fill="none" stroke="#9fcb59" stroke-width="13" opacity="0.22" />
+</g>
+<circle cx="400" cy="370" r="204" fill="none" stroke="#17270f" stroke-width="2" opacity="0.45" />
+<g filter="url(#greenGlow)">
+<use href="#diamond" transform="translate(400 109)" />
+<use href="#diamond" transform="translate(400 630)" />
+<use href="#diamond" transform="translate(139 370)" />
+<use href="#diamond" transform="translate(661 370)" />
+</g>
+<text x="400" y="249" text-anchor="middle" class="title-text" fill="url(#titleFill)" stroke="#4c742b" stroke-width="2" paint-order="stroke fill" filter="url(#greenGlow)">酵醒等阶</text>
+<g id="numGroup">
+<text x="400" y="506" text-anchor="middle" class="num-text" font-family="HanyiWenhei, serif" fill="url(#numFill)" stroke="#47682b" stroke-width="7" paint-order="stroke fill" filter="url(#numShadow)">1</text>
+<text x="400" y="500" text-anchor="middle" class="num-text" font-family="HanyiWenhei, serif" fill="none" stroke="#ffffba" stroke-width="1.2" opacity="0.45">1</text>
+</g>
+</g>
+</svg>
+</div>
+<div class="progress-area">
+<div class="progress-text top">0/350</div>
+<div class="progress-meter">
+<div class="progress-diamond left"></div>
+<div class="progress-track">
+<div class="progress-fill"></div>
+</div>
+<div class="progress-diamond right"></div>
+</div>
+<div class="progress-text bottom">酵行阅历 +0</div>
+</div>
+</div>
+<div class="modal-overlay" id="confirm-modal">
+<div class="confirmation-modal">
+<div class="modal-title">警告</div>
+<div class="divider"></div>
+<div class="modal-content">未获取到账号数据，无法将数据保存到服务器。<br>现在将使用默认状态进行游玩。<br>刷新网页后，数据将清空。</div>
+<div class="divider"></div>
+<div class="button-container">
+<button class="modal-btn cancel-btn" id="modal-cancel-btn">
+<div class="btn-icon cancel-icon"></div>
+<span>取消</span>
+</button>
+<button class="modal-btn confirm-btn" id="modal-confirm-btn">
+<div class="btn-icon confirm-icon"></div>
+<span>确定</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+const supabaseClient=window.supabase.createClient('https://ojeykghutjkpugslsnso.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZXlrZ2h1dGprcHVnc2xzbnNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNTEwNTMsImV4cCI6MjA5MzgyNzA1M30.cs1pcmCRi5kd6c-pMxTBJ8GlfBEiWF8v3yHe5IJfp7k');
+
+const searchStr = window.location.search.replace('?id=', '&id=');
+const params = new URLSearchParams(searchStr);
+const currentUserId = params.get('id');
+let currentLevel = parseInt(params.get('level') || '1');
+let currentExp = parseInt(params.get('exp') || '0');
+let itemGoldenYeast = parseInt(params.get('golden_yeast') || '0');
+let itemWheat = parseInt(params.get('wheat') || '0');
+
+const audioPopup=new Audio('https://ojeykghutjkpugslsnso.supabase.co/storage/v1/object/sign/web/Audio/ConfirmationBox-Popup.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kMjg1NWJhZC1mNTQ0LTQ3YzMtODg2My0xY2Y0MWRjZThhZjciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ3ZWIvQXVkaW8vQ29uZmlybWF0aW9uQm94LVBvcHVwLm1wMyIsImlhdCI6MTc4MDEwODczNywiZXhwIjoyMDk1NDY4NzM3fQ.OllBPCe66KAXQ1BKWobBHqAWDGMy8Opk0qJ3Tb190UU');
+const audioCancel=new Audio('https://ojeykghutjkpugslsnso.supabase.co/storage/v1/object/sign/web/Audio/ConfirmationBox-Cancel.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kMjg1NWJhZC1mNTQ0LTQ3YzMtODg2My0xY2Y0MWRjZThhZjciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ3ZWIvQXVkaW8vQ29uZmlybWF0aW9uQm94LUNhbmNlbC5tcDMiLCJpYXQiOjE3ODAxMDg4MDMsImV4cCI6MjA5NTQ2ODgwM30.87xuN9FS7LYfHfvnuf18CtEby9HdIPrBjhdzY-FVfPI');
+
+const EXP_TABLE=[0,350,475,600,700,825,950,1075,1175,1300];
+function getExpToNext(level){
+if(level>=10)return null;
+return EXP_TABLE[level];
+}
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+const stageEl=document.querySelector('.stage');
+const wrapEl=document.querySelector('.wrap');
+const progressArea=document.querySelector('.progress-area');
+const progressMeter=document.querySelector('.progress-meter');
+const progressFill=document.querySelector('.progress-fill');
+const numGroup=document.getElementById('numGroup');
+const numTexts=numGroup.querySelectorAll('text');
+const offlineModal=document.getElementById('confirm-modal');
+const offlineModalConfirmBtn=document.getElementById('modal-confirm-btn');
+const offlineModalCancelBtn=document.getElementById('modal-cancel-btn');
+
+function showOfflineModal(){
+if(offlineModal.classList.contains('active'))return;
+offlineModal.classList.add('active');
+audioPopup.currentTime=0;
+audioPopup.play().catch(()=>{});
+}
+function hideOfflineModal(){
+offlineModal.classList.remove('active');
+audioCancel.currentTime=0;
+audioCancel.play().catch(()=>{});
+}
+
+offlineModalConfirmBtn.addEventListener('click',hideOfflineModal);
+offlineModalCancelBtn.addEventListener('click',hideOfflineModal);
+
+function setNumber(value){
+numTexts.forEach(t=>{t.textContent=value;});
+}
+function resetNumber(){
+numGroup.style.transition='none';
+numGroup.style.transform='scale(1)';
+numGroup.style.opacity='1';
+setNumber(currentLevel);
+void numGroup.offsetWidth;
+}
+function resetProgress(){
+progressArea.classList.remove('active');
+progressArea.classList.remove('show-bottom');
+progressArea.classList.remove('show-top');
+progressMeter.style.transition='none';
+progressFill.style.transition='none';
+progressMeter.style.width='0px';
+progressFill.style.width='0%';
+void progressMeter.offsetWidth;
+progressMeter.style.transition='width 0.45s ease';
+progressFill.style.transition='width 0.7s ease';
+}
+
+function syncProgressPosition(){
+const stageRect=stageEl.getBoundingClientRect();
+const wrapRect=wrapEl.getBoundingClientRect();
+progressArea.style.left=wrapRect.left-stageRect.left+wrapRect.width/2+'px';
+progressArea.style.top=wrapRect.bottom-stageRect.top+5+'px';
+requestAnimationFrame(syncProgressPosition);
+}
+syncProgressPosition();
+
+async function _playExpAnimCore(oldExp,newExp,level){
+const maxExp=getExpToNext(level);
+const max=maxExp!==null?maxExp:newExp;
+resetProgress();
+resetNumber();
+const topText=progressArea.querySelector('.progress-text.top');
+const bottomText=progressArea.querySelector('.progress-text.bottom');
+topText.textContent=oldExp+'/'+max;
+bottomText.textContent='酵行阅历 +'+(newExp-oldExp);
+wrapEl.classList.remove('animate');
+wrapEl.classList.remove('show');
+void wrapEl.offsetWidth;
+wrapEl.classList.add('show');
+await sleep(500);
+await sleep(200);
+progressFill.style.transition='none';
+progressFill.style.width=(oldExp/max*100)+'%';
+void progressFill.offsetWidth;
+progressArea.classList.add('active');
+progressMeter.style.width='180px';
+await sleep(450);
+await sleep(300);
+progressArea.classList.add('show-bottom');
+await sleep(100);
+topText.textContent=newExp+'/'+max;
+progressArea.classList.add('show-top');
+progressFill.style.transition='width 0.7s ease';
+progressFill.style.width=(newExp/max*100)+'%';
+await sleep(700);
+await sleep(500);
+progressArea.classList.remove('show-top');
+progressArea.classList.remove('show-bottom');
+await sleep(250);
+progressMeter.style.width='0px';
+await sleep(450);
+progressArea.classList.remove('active');
+wrapEl.classList.remove('show');
+await sleep(500);
+resetProgress();
+}
+
+async function playLevelUpAndExpAnimation(oldLevel,newLevel,remainExp){
+resetProgress();
+setNumber(oldLevel);
+numGroup.style.transition='none';
+numGroup.style.transform='scale(1)';
+numGroup.style.opacity='1';
+void numGroup.offsetWidth;
+wrapEl.classList.remove('animate');
+wrapEl.classList.remove('show');
+void wrapEl.offsetWidth;
+wrapEl.classList.add('show');
+await sleep(500);
+await sleep(200);
+numGroup.style.transition='opacity 0.15s ease';
+numGroup.style.opacity='0';
+await sleep(150);
+setNumber(newLevel);
+numGroup.style.transition='none';
+numGroup.style.transform='scale(1.8)';
+void numGroup.offsetWidth;
+numGroup.style.transition='transform 0.4s ease, opacity 0.25s ease';
+numGroup.style.opacity='1';
+numGroup.style.transform='scale(1.25)';
+await sleep(400);
+await sleep(2000);
+wrapEl.classList.remove('show');
+await sleep(500);
+currentLevel=newLevel;
+currentExp=remainExp;
+resetProgress();
+resetNumber();
+if(remainExp>0){
+await _playExpAnimCore(0,remainExp,currentLevel);
+}
+}
+
+async function playExpAnimation(oldExp,newExp,level){
+resetProgress();
+resetNumber();
+await _playExpAnimCore(oldExp,newExp,level);
+}
+
+async function playLevelIntro(){
+    resetProgress();
+    resetNumber();
+    stageEl.style.opacity = '1';
+    wrapEl.style.opacity = '0';
+    wrapEl.classList.remove('show');
+    wrapEl.classList.remove('animate');
+    void wrapEl.offsetWidth;
+    wrapEl.classList.add('animate');
+    await sleep(3000);
+    wrapEl.style.opacity = '0';
+    wrapEl.classList.remove('animate');
+    wrapEl.classList.remove('show');
+    stageEl.style.opacity = '0';
+}
+
+function createRipple(event) {
+    const button = event.currentTarget;
+    const ripple = document.createElement('div');
+    ripple.className = 'ripple-effect';
+    button.appendChild(ripple);
+    setTimeout(() => {
+        ripple.remove();
+    }, 300);
+}
+
+document.querySelectorAll('.skill-btn').forEach(btn => {
+    btn.addEventListener('click', createRipple);
+});
+
+async function init() {
+if (!currentUserId) {
+showOfflineModal();
+currentLevel = 1;
+currentExp = 0;
+}
+await playLevelIntro();
+}
+
+const bread = document.getElementById('bread-character');
+let isDragging = false;
+let dragOffset = { x: 0, y: 0 };
+
+function initPosition() {
+const cx = window.innerWidth / 4 - 45;
+const cy = window.innerHeight / 2 - 30;
+bread.style.left = cx + 'px';
+bread.style.top = cy + 'px';
+}
+initPosition();
+window.addEventListener('resize', initPosition);
+
+bread.addEventListener('mousedown', startDrag);
+bread.addEventListener('touchstart', startDrag);
+document.addEventListener('mousemove', doDrag);
+document.addEventListener('touchmove', doDrag);
+document.addEventListener('mouseup', endDrag);
+document.addEventListener('touchend', endDrag);
+
+function startDrag(e) {
+isDragging = true;
+const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+dragOffset.x = clientX - bread.offsetLeft;
+dragOffset.y = clientY - bread.offsetTop;
+bread.style.cursor = 'grabbing';
+}
+
+function doDrag(e) {
+if (!isDragging) return;
+e.preventDefault();
+const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+let newLeft = clientX - dragOffset.x;
+let newTop = clientY - dragOffset.y;
+newLeft = Math.max(0, Math.min(window.innerWidth - bread.offsetWidth, newLeft));
+newTop = Math.max(0, Math.min(window.innerHeight - bread.offsetHeight, newTop));
+bread.style.left = newLeft + 'px';
+bread.style.top = newTop + 'px';
+}
+
+function endDrag() {
+isDragging = false;
+bread.style.cursor = 'grab';
+}
+
+init();
+</script>
+</body>
+</html>
