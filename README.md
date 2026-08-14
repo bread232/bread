@@ -31,7 +31,7 @@ wheatsong/
 
 ## 1. 🚪 登录认证中心（Login Gateway）
 
-**域名**：`wheatsong-breadimpact-login.netlify.app`
+**域名**：`wheatsong.gamer.gd/games/breadimpact/`
 
 **功能**：
 - 用户账号密码登录（支持自动登录）
@@ -49,7 +49,7 @@ wheatsong/
 
 ## 2. 🌾 主游戏世界（Main Game）
 
-**域名**：`wheatsong-breadimpact.netlify.app`
+**域名**：`wheatsong.gamer.gd/games/breadimpact/web/`
 
 **功能**：
 - 2D 横版探索场景（动态天空、森林、城镇、建筑）
@@ -71,7 +71,7 @@ wheatsong/
 
 ## 3. 🌐 品牌形象官网（Official Site）
 
-**域名**：`wheatsong.netlify.app`
+**域名**：`wheatsong.gamer.gd/`
 
 **功能**：
 - 世界观展示（「三月神话」「废弃酵母」「赤月王朝」）
@@ -90,7 +90,7 @@ wheatsong/
 
 ## 4. 📝 独立注册页（Signup Page）
 
-**域名**：`wheatsong-breadimpact-signup.netlify.app`
+**域名**：`wheatsong.gamer.gd/signup/`
 
 **功能**：
 - 新用户注册（用户名、密码、邮箱）
@@ -103,7 +103,7 @@ wheatsong/
 
 ## 5. ⚔️ 战斗/活动子游戏（Battle Sub-game）
 
-**域名**：`wheatsong-breadimpact-battle.netlify.app`
+**域名**：`wheatsong.gamer.gd/games/breadimpact/web/battle/`
 
 **功能**：
 - 承载「无极限超激格斗赛」等限时活动
@@ -116,7 +116,7 @@ wheatsong/
 
 ## 6. 📄 隐私政策页（Privacy Policy）
 
-**域名**：`wheatsong-privacy.netlify.app`
+**域名**：`wheatsong.gamer.gd/privacy-policy.html`
 
 **功能**：
 - 展示用户隐私协议与条款
@@ -127,6 +127,8 @@ wheatsong/
 # 🛠️ 工具部分（Tools）
 
 ## 📦 代码储存器（Code Storage）
+
+**域名**：`wheatsong.gamer.gd/tool/code-storage.html`
 
 **项目简介**：  
 一款面向程序员的云端代码片段管理工具，支持纯文本与多种编程语言代码的存储、编辑、搜索与下载。所有数据保存在 Supabase 数据库中，实现跨设备访问。
